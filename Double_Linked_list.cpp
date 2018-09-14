@@ -42,28 +42,31 @@ public:
 
 	CList(){ head = nullptr;  tail = nullptr; }
 	bool find(T value, CNode<T>** &p, CNode<T>** &t);
-	bool insert(T value);
-	bool remove(T value);
+	void insert(T value);
+	void remove(T value);
 	void printList();
 	void printListReverse();
 };
 
 template<class T, class C>
 bool CList<T, C>::find(T value, CNode<T>** &p, CNode<T>** &t)
-{	
+{
 	p = &head;
 	t = &tail;
-	while ((*p) && (*t) && comparator((*p)->data, value)) {
-		t = p;
+	while (*p && ((*p)->data < value)) {
 		p = &((*p)->next);
-		//t = &((*t)->previous);
 	}
+
+	while (*t && ((*t)->data > value)) {
+		t = &((*t)->previous);
+	}
+
 	return (*p) && (*t) && (*p)->data == value;
 }
 
 
 template<class T, class C>
-bool CList<T, C>::insert(T value)
+void CList<T, C>::insert(T value)
 {
 	CNode<T>** p;
 	CNode<T>** t;
@@ -75,15 +78,19 @@ bool CList<T, C>::insert(T value)
 
 	*p = newNode;
 	*t = newNode;
-	//*t = (*t)->previous;
-
-	return 1;
 }
 
 template<class T, class C>
-bool CList<T, C>::remove(T value)
+void CList<T, C>::remove(T value)
 {
-	return 1;
+	CNode<T>** p;
+	CNode<T>** t;
+	if (!find(value, p, t)) return;
+
+	CNode<T>* temp = *p;
+	*p = temp->next;
+	*t = temp->previous;
+	delete temp;
 }
 
 template<class T, class C>
@@ -113,11 +120,10 @@ int main()
 	CList<int, CLess<int>> linkedList;
 
 	for (int i = 0; i < 10; ++i) linkedList.insert(i);
-	std::cout << "\n";
+
 	linkedList.printList();
-	//linkedList.insert(3); linkedList.insert(5);
-	std::cout << "\n";
-	//cout << linkedList.head->next->data << endl;
+	cout << "\n";
 	linkedList.printListReverse();
+
 	return 0;
 }
