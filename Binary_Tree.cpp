@@ -52,7 +52,7 @@ bool BTree<T, C>::find(T value, Node<T>** &p)
 	while (*p && ((*p)->data != value)) {
 		p = &((*p)->son[comparator((*p)->data, value)]);
 	}
-	return !!*p;					// !!*p: dependes of compiler
+	return !!*p;					// !!*p: depends of compiler
 }
 
 template<class T, class C>
@@ -72,7 +72,6 @@ Node<T>** BTree<T, C>::rep(Node<T>**& p)
 	while ((*t)->son[0]) {
 		t = &((*t)->son[0]);
 	}
-
 	return t;
 }
 
