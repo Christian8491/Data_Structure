@@ -1,6 +1,9 @@
 /* This code implements a increasing LINKED LIST with different values */
 
 #include <iostream>
+#include "Node.h"
+#include "LinkedListIterator.h"
+
 
 /* ========== Comparators ========== */
 template<class T>
@@ -17,18 +20,6 @@ struct Greater
 /* ========== end Comparators ========== */
 
 
-/* ========== Node ========== */
-template<class T>
-struct Node
-{
-	T data;
-	Node<T>* next;
-
-	Node(T x) { data = x; next = nullptr; }
-};
-/* ========== end Node ========== */
-
-
 /* =========== Linked List  =========== */
 template<class T, class C>
 class LinkedList
@@ -43,8 +34,10 @@ public:
 	bool remove(T value);
 	void printList();
 
-	LinkedListIterator begin();
-	LinkedListIterator end();
+	// Iterator
+	typedef LinkedListIterator<T> Iterator;
+	Iterator begin();
+	Iterator end();
 };
 
 template<class T, class C>
@@ -56,7 +49,6 @@ bool LinkedList<T, C>::find(T value, Node<T>** &p)
 	}
 	return *p && (*p)->data == value;
 }
-
 
 template<class T, class C>
 bool LinkedList<T, C>::insert(T value)
@@ -90,21 +82,32 @@ void LinkedList<T, C>::printList()
 	}
 }
 
+template<class T, class C>
+LinkedListIterator<T> LinkedList<T, C>::begin()
+{
+	return LinkedListIterator<T>(head);
+}
+
+template<class T, class C>
+LinkedListIterator<T> LinkedList<T, C>::end()
+{
+	return LinkedListIterator<T>(nullptr);
+}
+
 /* =========== end Linked List  =========== */
 
 
 int main()
 {
+	// Insert values
 	LinkedList<int, Less<int>> linkedList;
-
 	for (int i = 0; i < 10; ++i) linkedList.insert(i);
-
 	linkedList.printList();
 
-	linkedList.remove(5);
-
-	std::cout << "\n";
-	linkedList.printList();
+	// Iterator example
+	LinkedList<int, Less<int>>::Iterator i;
+	for (i = linkedList.begin(); i != linkedList.end(); ++i)
+		std::cout << *i << std::endl;
 
 	return 0;
 }
