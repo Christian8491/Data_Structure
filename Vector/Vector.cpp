@@ -1,9 +1,10 @@
-/* This code implements a VECTOR and use a vector iterator */
+/* This code implements a VECTOR */
 
 #include <iostream>
 #include "VectorIterator.h"
+#include "VectorReverseITerator.h"
 
-/* =========== Vector  =========== */
+/* =========== Linked List  =========== */
 template<class T>
 class Vector
 {
@@ -17,16 +18,19 @@ public:
 
 	inline T& operator[](const int index);
 
-	typedef VectorIterator<T> Iterator;
-	inline Iterator begin();
-	inline Iterator end();
+	typedef VectorIterator<T> iterator;
+	inline iterator begin();
+	inline iterator end();
 
+	typedef VectorReverseIterator<T> reverse_iterator;
+	inline reverse_iterator rbegin();
+	inline reverse_iterator rend();
 };
 
 template<class T>
 inline Vector<T>::Vector()
 {
-	size = 0; 
+	size = 0;
 	ptr = nullptr;
 }
 
@@ -60,6 +64,18 @@ inline VectorIterator<T> Vector<T>::end()
 {
 	return VectorIterator<T>(ptr, size);
 }
+
+template<class T>
+inline VectorReverseIterator<T> Vector<T>::rbegin()
+{
+	return VectorReverseIterator<T>(ptr, size - 1);
+}
+
+template<class T>
+inline VectorReverseIterator<T> Vector<T>::rend()
+{
+	return VectorReverseIterator<T>(ptr, -1);
+}
 /* =========== end Vector =========== */
 
 
@@ -70,8 +86,16 @@ int main()
 	for (int i = 0; i < 10; ++i) myVector[i] = i;
 
 	// Iterator example
-	Vector<int>::Iterator i;
+	Vector<int>::iterator i;
 	for (i = myVector.begin(); i != myVector.end(); ++i)
 		std::cout << *i << std::endl;
+
+	std::cout << std::endl;
+
+	// Reverse Iterator example
+	Vector<int>::reverse_iterator r;
+	for (r = myVector.rbegin(); r != myVector.rend(); ++r)
+		std::cout << *r << std::endl;
+
 	return 0;
 }
