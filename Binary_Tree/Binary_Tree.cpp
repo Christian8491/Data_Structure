@@ -1,6 +1,7 @@
 /* This code implements a BINARY TREE without repetitions */
 
 #include <iostream>
+#include "BinaryTreeIterator.h"
 using namespace std;
 
 /* ========== Comparators ========== */
@@ -18,35 +19,29 @@ struct Greater
 /* ========== end Comparators ========== */
 
 
-/* ============ Node ============ */
-template<class T>
-struct Node
-{
-	T data;
-	Node<T>* son[2];
-	Node(){};
-	Node(T x) { data = x, son[0] = son[1] = nullptr; }
-};
-/* ========== end Node ========== */
-
-
 /* =========== Binary Tree =========== */
 template<class T, class C>
 class BTree
 {
 public:
-	Node<T>* root;
+	BTNode<T>* root;
 	C comparator;
 
 	BTree(){ root = nullptr; }
-	bool find(T value, Node<T>** &p);
+	bool find(T value, BTNode<T>** &p);
 	bool insert(T value);
 	bool remove(T value);
-	Node<T>** rep(Node<T>** &p);
+	BTNode<T>** rep(BTNode<T>** &p);
+
+	// Iterators
+	typedef BinaryTreeIterator<T> inorder_iterator;
+	inorder_iterator begin();
+	inorder_iterator end();
+
 };
 
 template<class T, class C>
-bool BTree<T, C>::find(T value, Node<T>** &p)
+bool BTree<T, C>::find(T value, BTNode<T>** &p)
 {
 	p = &root;
 	while (*p && ((*p)->data != value)) {
@@ -58,17 +53,16 @@ bool BTree<T, C>::find(T value, Node<T>** &p)
 template<class T, class C>
 bool BTree<T, C>::insert(T value)
 {
-	Node<T>** p;
+	BTNode<T>** p;
 	if (find(value, p)) return 0;
-	*p = new Node<T>(value);
+	*p = new BTNode<T>(value);
 	return 1;
 }
 
-
 template<class T, class C>
-Node<T>** BTree<T, C>::rep(Node<T>**& p)
+BTNode<T>** BTree<T, C>::rep(BTNode<T>**& p)
 {
-	Node<T>** t = &((*p)->son[1]);
+	BTNode<T>** t = &((*p)->son[1]);
 	while ((*t)->son[0]) {
 		t = &((*t)->son[0]);
 	}
@@ -78,17 +72,33 @@ Node<T>** BTree<T, C>::rep(Node<T>**& p)
 template<class T, class C>
 bool BTree<T, C>::remove(T value)
 {
-	Node<T>** p;
+	BTNode<T>** p;
 	if (!find(value, p)) return 0;
 	if ((*p)->son[0] && (*p)->son[1]) {
-		Node<T>** q = rep(p);
+		BTNode<T>** q = rep(p);
 		(*p)->data = (*q)->data;
 		p = q;
 	}
-	Node<T>* t = *p;
+	BTNode<T>* t = *p;
 	*p = (*p)->son[!(*p)->son[0]];
 	delete t;
 	return 1;
+}
+
+template<class T, class C>
+BinaryTreeIterator<T> BTree<T, C>::begin()
+{
+	BinaryTreeIterator<T> inIterator;
+	inIterator.next(root);
+	return inIterator;
+}
+
+template<class T, class C>
+BinaryTreeIterator<T> BTree<T, C>::end()
+{
+	BinaryTreeIterator<T> inIterator;
+	inIterator.next(nullptr);
+	return inIterator;
 }
 
 int main()
@@ -96,8 +106,13 @@ int main()
 	BTree<int, Less<int>> binaryTree;
 
 	// Simple insertions
-	binaryTree.insert(8);
-	binaryTree.insert(4); binaryTree.insert(15);
-	binaryTree.insert(2); binaryTree.insert(6); binaryTree.insert(11); binaryTree.insert(18);
+	int values[7] = { 8, 4, 15, 2, 6, 11, 18 };
+	for (int i = 0; i < 7; ++i) binaryTree.insert(values[i]);
+
+	// Iterator example
+	BTree<int, Less<int>>::inorder_iterator i;
+	for (i = binaryTree.begin(); i != binaryTree.end(); ++i)
+		cout << (*i)->data << " ";
+
 	return 0;
 }
