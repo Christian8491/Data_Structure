@@ -43,6 +43,7 @@ struct CSMatrix
 	bool find(int x, int y, Node<T>**&p, Node<T>**& q);
 	bool insert(int pos_row, int pos_col, T val);
 	bool remove(int pos_row, int pos_col);
+	void print_sparse_matrix();
 };
 
 template <class T>
@@ -94,6 +95,25 @@ bool CSMatrix<T>::remove(int x, int y)
 	return 1;
 }
 
+template <class T>
+void CSMatrix<T>::print_sparse_matrix()
+{
+	Node<T>* y_head;
+	for (size_t j = 0; j < vector_horizontal.size(); ++j) {
+		y_head = vector_vertical[j].head;
+		if (y_head) {
+			for (size_t i = 0; i < vector_horizontal.size(); ++i) {
+				if (y_head && y_head->x_pos == i) {
+					cout << y_head->value << "\t";
+					y_head = y_head->right_ptr;
+				}
+				else cout << "--\t";
+			}
+		}
+		cout << endl;
+	}
+}
+
 int main()
 {
 	CSMatrix<int> matrix(4, 4);
@@ -103,6 +123,8 @@ int main()
 	matrix.insert(2, 2, -2), matrix.insert(2, 0, -5), matrix.insert(0, 0, 90);
 	matrix.insert(6, 2, -2);
 	matrix.remove(0, 3), matrix.remove(0, 0);
+
+	matrix.print_sparse_matrix();
 
 	return 0;
 }
